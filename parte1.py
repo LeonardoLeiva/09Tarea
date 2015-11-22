@@ -11,6 +11,7 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
+from scipy import optimize as opt
 
 # funciones estructurales
 
@@ -49,24 +50,45 @@ def residuos(param, x, y):
     return err
 
 
+def aprox_leastsq(d, v, adivinanza):
+    aprox = leastsq(residuos, adivinanza, args=(d, v))
+    return aprox
+
+
+'''
+def derivada_chi_cuadrado(x, y, beta):
+    der = np.sum(x * y - x ** 2 * beta)
+    return der
+    '''
+
+
+def aprox_manual(x, y, beta_0):
+    derivada_chi_cuadrado = lambda beta: np.sum(x * y - x ** 2 * beta)
+    beta = opt.newton(derivada_chi_cuadrado, beta_0)
+    return beta
+
+
 # main
 nom = "data/hubble_original.dat"
 datos = leer_archivo(nom)
 d = datos[:, 0]
 v = datos[:, 1]
 adivinanza = 500
-aprox = leastsq(residuos, adivinanza, args=(d, v))
+# aprox via leastsq
+aprox1 = aprox_leastsq(d, v, adivinanza)
+# aproximacion manual
+aprox2 = aprox_manual(d, v, adivinanza)
+print aprox2
 # datos para graficar
 d_aprox = np.linspace(d[0], d[-1], 10)
-H_0 = aprox[0]
-print H_0
-v_aprox = y_aprox(d_aprox, H_0)
+print aprox1[0]
+v_aprox2 = y_aprox(d_aprox, aprox2)
 # graficos
 fig = plt.figure()
 fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(d, v, 'o')
-ax1.plot(d_aprox, v_aprox)
+ax1.plot(d_aprox, v_aprox2)
 ax1.set_xlabel("d")
 ax1.set_ylabel("v(d)")
 plt.savefig("parte1.png")
