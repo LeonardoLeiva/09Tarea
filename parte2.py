@@ -47,8 +47,8 @@ def aprox_manual(x, y, beta_0):
 # main
 nom = "data/SNIa.dat"
 datos = leer_archivo(nom)
-d = datos[:, 0]
-v = datos[:, 1]
+d = datos[:, 1]
+v = datos[:, 0]
 adivinanza = 500
 # aproximacion manual
 aprox2 = aprox_manual(d, v, adivinanza)
