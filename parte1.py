@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import leastsq
 from scipy import optimize as opt
 
+np.random.seed(8624617)
 # funciones estructurales
 
 
@@ -63,6 +64,35 @@ def aprox_manual(x, y, beta_0):
     return beta
 
 
+def intervalo_confianza(muestra_x, muestra_y, porcentaje):
+    '''
+    busca intervalo de confianza. genera una muestra aleatoria en base a los
+    datos experimentales. a partir de cada muestra obtiene el valor de H_0.
+    corresponde al metodo de bootstrapt. porcentaje refiere al porcentaje del
+    intervalo de confianza que se busca.
+    '''
+    if (porcentaje < 0) or (porcentaje > 100):
+        print str('porcentaje no valido')
+    N = len(muestra_x)
+    N_iteracion = int(N ** 2)
+    print N_iteracion
+    promedios = np.zeros(N_iteracion)
+    muestra_x, muestra_y
+    for i in range(N_iteracion):
+        azar = np.random.randint(low=0, high=N, size=N)
+        x_i = muestra_x[azar]
+        y_i = muestra_y[azar]
+        aprox = leastsq(residuos, adivinanza, args=(x_i, y_i))
+        promedios[i] = aprox[0]
+    promedios = np.sort(promedios)
+    minim = ((100 - porcentaje) /2) * 0.01
+    maxim = 1 - (minim)
+    lim_min = promedios[int(N_iteracion * minim)]
+    lim_max = promedios[int(N_iteracion * maxim)]
+    return lim_min, lim_max
+    pass
+
+
 # main
 nom = "data/hubble_original.dat"
 datos = leer_archivo(nom)
@@ -78,14 +108,18 @@ print aprox2
 d_aprox = np.linspace(d[0], d[-1], 10)
 print aprox1[0]
 v_aprox2 = y_aprox(d_aprox, aprox2)
+# intervalo de confianza
+intervalo = intervalo_confianza(d, v, 95)
+print intervalo[0]
+print intervalo[1]
 # graficos
 fig = plt.figure()
 fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(d, v, 'o')
 ax1.plot(d_aprox, v_aprox2)
-ax1.set_xlabel("d")
-ax1.set_ylabel("v(d)")
+ax1.set_xlabel("Distancia")
+ax1.set_ylabel("Velocidad")
 plt.savefig("parte1.png")
 plt.draw()
 plt.show()
