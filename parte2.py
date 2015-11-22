@@ -20,7 +20,7 @@ def leer_archivo(nombre):
     lee el archivo
     nombre debe ser un str
     '''
-    datos = np.loadtxt(nombre, usecols=(1,2))
+    datos = np.loadtxt(nombre, usecols=(1, 2))
     return datos
 
 
