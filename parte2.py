@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-Este codigo aproxima la constante de Hubble con los primeros datos
-experimentales. Se espera que no sea suficientemente cercano al valor
-real
+Este codigo aproxima la constante de Hubble con los segundos datos
+experimentales. el codigo es muy similar a parte1.py para los datos iniciales
 '''
 
 from __future__ import division
@@ -21,33 +20,15 @@ def leer_archivo(nombre):
     lee el archivo
     nombre debe ser un str
     '''
-    datos = np.loadtxt(nombre)
+    datos = np.loadtxt(nombre, usecols=(1,2))
     return datos
-    pass
 
 
 def y_aprox(x, param):
-    '''
-    funcion lineal para minimizar
-    se define para tener un caso mas general en el que se tenga una funcion
-    mucho mas compleja por minimizar
-    '''
     a = param
     b = 0
     y = a * x + b
     return y
-
-
-def residuos(param, x, y):
-    c = param
-    y_ap = y_aprox(x, param)
-    err = y - y_ap
-    return err
-
-
-def aprox_leastsq(d, v, adivinanza):
-    aprox = leastsq(residuos, adivinanza, args=(d, v))
-    return aprox
 
 
 def aprox_manual(x, y, beta_0):
@@ -64,19 +45,18 @@ def aprox_manual(x, y, beta_0):
 
 
 # main
-nom = "data/hubble_original.dat"
+nom = "data/SNIa.dat"
 datos = leer_archivo(nom)
 d = datos[:, 0]
 v = datos[:, 1]
 adivinanza = 500
-# aprox via leastsq
-aprox1 = aprox_leastsq(d, v, adivinanza)
 # aproximacion manual
 aprox2 = aprox_manual(d, v, adivinanza)
 print aprox2
 # datos para graficar
-d_aprox = np.linspace(d[0], d[-1], 10)
-print aprox1[0]
+d_min = np.amin(d)
+d_max = np. amax(d)
+d_aprox = np.linspace(d_min, d_max, 10)
 v_aprox2 = y_aprox(d_aprox, aprox2)
 # graficos
 fig = plt.figure()
