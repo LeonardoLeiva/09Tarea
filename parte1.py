@@ -36,6 +36,9 @@ def aproximar_parametros(a):
 
 def y_aprox(x, param):
     '''
+    funcion lineal para minimizar
+    se define para tener un caso mas general en el que se tenga una funcion
+    mucho mas compleja por minimizar
     '''
     a = param
     b = 0
@@ -55,14 +58,14 @@ def aprox_leastsq(d, v, adivinanza):
     return aprox
 
 
-'''
-def derivada_chi_cuadrado(x, y, beta):
-    der = np.sum(x * y - x ** 2 * beta)
-    return der
-    '''
-
-
 def aprox_manual(x, y, beta_0):
+    '''
+    se buscan los ceros de la derivada de chi cuadrado. es equivalente a usar
+    la funcion leastsq.
+    x e y son los arreglos de datos experimentales. beta es el parametro a
+    minimizar. este caso es particular para una relacion lineal entre x e y de
+    la forma y = m * x + n, con n = 0. m corresponde a beta
+    '''
     derivada_chi_cuadrado = lambda beta: np.sum(x * y - x ** 2 * beta)
     beta = opt.newton(derivada_chi_cuadrado, beta_0)
     return beta
