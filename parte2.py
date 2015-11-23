@@ -67,15 +67,14 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
         print str('porcentaje no valido')
     N = len(muestra_x)
     N_iteracion = int(N ** 2)
-    print N_iteracion
     promedios = np.zeros(N_iteracion)
     muestra_x, muestra_y
     for i in range(N_iteracion):
         azar = np.random.randint(low=0, high=N, size=N)
         x_i = muestra_x[azar]
         y_i = muestra_y[azar]
-        aprox = leastsq(residuos, adivinanza, args=(x_i, y_i))
-        promedios[i] = aprox[0]
+        aprox = biseccion(x_i, y_i)
+        promedios[i] = aprox
     promedios = np.sort(promedios)
     minim = ((100 - porcentaje) /2) * 0.01
     maxim = 1 - (minim)
@@ -84,14 +83,23 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
     return lim_min, lim_max
 
 
+def biseccion(d, v, adivinanza=500):
+    aprox1 = aprox_manual(d, v, adivinanza)
+    aprox2 = aprox_manual(v, d, 1. / adivinanza)
+    ap1 = aprox1
+    ap2 = 1 / aprox2
+    a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
+    return a
+
+
 # main
 nom = "data/SNIa.dat"
 datos = leer_archivo(nom)
 d = datos[:, 1]
 v = datos[:, 0]
 adivinanza = 500
-# aproximacion manual
-aprox2 = aprox_manual(d, v, adivinanza)
+# aproximacion manual + biseccion
+aprox2 = biseccion(d, v, adivinanza)
 print aprox2
 # datos para graficar
 d_min = np.amin(d)
@@ -108,8 +116,8 @@ fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(d, v, 'o')
 ax1.plot(d_aprox, v_aprox2)
-ax1.set_xlabel("d")
-ax1.set_ylabel("v(d)")
-plt.savefig("parte1.png")
+ax1.set_xlabel("Distancia")
+ax1.set_ylabel("Velocidad")
+plt.savefig("parte2.png")
 plt.draw()
 plt.show()
