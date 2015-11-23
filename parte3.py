@@ -63,7 +63,7 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
         r = np.random.normal(0, 1, size=len(muestra_x))
         x_i = muestra_x + err_x * r
         y_i = muestra_y + err_y * r
-        aprox = leastsq(residuos, adivinanza, args=(x_i, y_i))
+        aprox = biseccion(x_i, y_i)
         promedios[i] = aprox[0]
     promedios = np.sort(promedios)
     minim = ((100 - porcentaje) /2) * 0.01
@@ -74,6 +74,15 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
     pass
 
 
+def biseccion(x, y, adivinanza=1):
+    aprox1 = aprox_leastsq(x, y, adivinanza)
+    aprox2 = aprox_leastsq(y, x, 1. / adivinanza)
+    ap1 = aprox1[0]
+    ap2 = 1 / aprox2[0]
+    a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
+    return a
+
+
 # main
 nom = "data/DR9Q.dat"
 datos = leer_archivo(nom)
@@ -81,9 +90,9 @@ i = datos[:, 0]
 di = datos[:, 1]
 z = datos[:, 2]
 dz = datos[:, 3]
-adivinanza = 500
+adivinanza = 1
 # aprox via leastsq
-aprox1 = aprox_leastsq(i, z, adivinanza)
+aprox1 = biseccion(i, z, adivinanza)
 print aprox1
 # datos para graficar
 i_min = np.amin(i)

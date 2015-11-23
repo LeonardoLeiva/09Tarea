@@ -115,7 +115,6 @@ H_0 = biseccion(d, v, adivinanza)
 print H_0
 # datos para graficar
 d_aprox = np.linspace(d[0], d[-1], 10)
-print aprox1[0]
 v_aprox2 = y_aprox(d_aprox, H_0)
 # intervalo de confianza
 intervalo = intervalo_confianza(d, v, 95)
