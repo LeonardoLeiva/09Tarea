@@ -75,7 +75,6 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
         print str('porcentaje no valido')
     N = len(muestra_x)
     N_iteracion = int(N ** 2)
-    print N_iteracion
     promedios = np.zeros(N_iteracion)
     muestra_x, muestra_y
     for i in range(N_iteracion):
@@ -93,6 +92,16 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
     pass
 
 
+def biseccion(d, v, adivinanza=500):
+    aprox1 = aprox_leastsq(d, v, adivinanza)
+    aprox2 = aprox_leastsq(v, d, 1. / adivinanza)
+    ap1 = aprox1[0]
+    ap2 = 1 / aprox2[0]
+    a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
+    return a
+    pass
+
+
 # main
 nom = "data/hubble_original.dat"
 datos = leer_archivo(nom)
@@ -104,6 +113,9 @@ aprox1 = aprox_leastsq(d, v, adivinanza)
 # aproximacion manual
 aprox2 = aprox_manual(d, v, adivinanza)
 print aprox2
+# aprox biseccion
+H_0 = biseccion(d, v, adivinanza)
+print H_0
 # datos para graficar
 d_aprox = np.linspace(d[0], d[-1], 10)
 print aprox1[0]
