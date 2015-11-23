@@ -81,8 +81,8 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
         azar = np.random.randint(low=0, high=N, size=N)
         x_i = muestra_x[azar]
         y_i = muestra_y[azar]
-        aprox = leastsq(residuos, adivinanza, args=(x_i, y_i))
-        promedios[i] = aprox[0]
+        aprox = biseccion(x_i, y_i)
+        promedios[i] = aprox
     promedios = np.sort(promedios)
     minim = ((100 - porcentaje) /2) * 0.01
     maxim = 1 - (minim)
