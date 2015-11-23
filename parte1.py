@@ -48,7 +48,7 @@ def residuos(param, x, y):
 
 def aprox_leastsq(d, v, adivinanza):
     aprox = leastsq(residuos, adivinanza, args=(d, v))
-    return aprox
+    return aprox[0]
 
 
 def aprox_manual(x, y, beta_0):
@@ -110,12 +110,18 @@ v = datos[:, 1]
 adivinanza = 500
 # aprox via leastsq
 aprox1 = aprox_leastsq(d, v, adivinanza)
+aprox2 = 1. / aprox_leastsq(v, d, adivinanza)
 # aprox manual + biseccion
 H_0 = biseccion(d, v, adivinanza)
 print H_0
+print aprox1, aprox2
 # datos para graficar
-d_aprox = np.linspace(d[0], d[-1], 10)
-v_aprox2 = y_aprox(d_aprox, H_0)
+d_min = np.amin(d)
+d_max = np. amax(d)
+d_aprox = np.linspace(d_min, d_max, 10)
+v_aprox = y_aprox(d_aprox, H_0)
+v_aprox1 = y_aprox(d_aprox, aprox1)
+v_aprox2 = y_aprox(d_aprox, aprox2)
 # intervalo de confianza
 intervalo = intervalo_confianza(d, v, 95)
 print intervalo[0]
@@ -125,9 +131,13 @@ fig = plt.figure()
 fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(d, v, 'o')
-ax1.plot(d_aprox, v_aprox2)
-ax1.set_xlabel("Distancia")
-ax1.set_ylabel("Velocidad")
+ax1.plot(d_aprox, v_aprox, label="Biseccion")
+ax1.plot(d_aprox, v_aprox1, label="v = H * d")
+ax1.plot(d_aprox, v_aprox2, label="d = v / H")
+ax1.plot()
+ax1.set_xlabel("Distancia [Mpc]")
+ax1.set_ylabel("Velocidad [Km / s]")
+plt.legend(loc=4)
 plt.savefig("parte1.png")
 plt.draw()
 plt.show()

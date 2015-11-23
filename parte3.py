@@ -21,7 +21,7 @@ def leer_archivo(nombre):
     nombre debe ser un str
     '''
     datos = np.loadtxt(nombre, usecols=(80, 81, 82, 83))
-    return datos
+    return datos * 3.631
 
 
 def y_aprox(x, param):
@@ -109,8 +109,8 @@ fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(i, z, 'o')
 ax1.plot(i_aprox, z_aprox2)
-ax1.set_xlabel("d")
-ax1.set_ylabel("v(d)")
+ax1.set_xlabel("Flujo de banda i")
+ax1.set_ylabel("Flujo de banda z")
 plt.savefig("parte1.png")
 plt.draw()
 plt.show()
