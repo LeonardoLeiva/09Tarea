@@ -48,6 +48,32 @@ def aprox_leastsq(d, v, adivinanza):
     return aprox
 
 
+def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
+    '''
+    busca intervalo de confianza. genera una muestra aleatoria en base a los
+    datos experimentales. a partir de cada muestra obtiene el valor de la
+    constante apropiada para modelo lineal.
+    corresponde al metodo de monte carlo. porcentaje refiere al porcentaje del
+    intervalo de confianza que se busca.
+    '''
+    N = len(muestra_x)
+    Nmc = 10000
+    promedios = np.zeros(Nmc)
+    for i in range(Nmc):
+        r = np.random.normal(0, 1, size=len(muestra_x))
+        x_i = muestra_x + err_x * r
+        y_i = muestra_y + err_y * r
+        aprox = leastsq(residuos, adivinanza, args=(x_i, y_i))
+        promedios[i] = aprox[0]
+    promedios = np.sort(promedios)
+    minim = ((100 - porcentaje) /2) * 0.01
+    maxim = 1 - (minim)
+    lim_min = promedios[int(Nmc * minim)]
+    lim_max = promedios[int(Nmc * maxim)]
+    return lim_min, lim_max
+    pass
+
+
 # main
 nom = "data/DR9Q.dat"
 datos = leer_archivo(nom)
@@ -60,11 +86,14 @@ adivinanza = 500
 aprox1 = aprox_leastsq(i, z, adivinanza)
 print aprox1
 # datos para graficar
-# datos para graficar
 i_min = np.amin(i)
 i_max = np. amax(i)
 i_aprox = np.linspace(i_min, i_max, 10)
 z_aprox2 = y_aprox(i_aprox, aprox1[0])
+# intervalo de confianza
+intervalo = intervalo_confianza(i, z, di, dz, 95)
+print intervalo[0]
+print intervalo[1]
 # graficos
 fig = plt.figure()
 fig.clf()
