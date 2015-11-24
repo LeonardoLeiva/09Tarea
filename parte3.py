@@ -29,9 +29,9 @@ def y_aprox(x, param):
     funcion lineal para minimizar
     se define para tener un caso mas general en el que se tenga una funcion
     mucho mas compleja por minimizar
+    a es pendiente, b es coef de posicion
     '''
-    a = param
-    b = 0
+    a, b = param
     y = a * x + b
     return y
 
@@ -58,29 +58,37 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
     '''
     N = len(muestra_x)
     Nmc = 10000
-    promedios = np.zeros(Nmc)
+    promedios_a = np.zeros(Nmc)
+    promedios_b = np.zeros(Nmc)
     for i in range(Nmc):
         r = np.random.normal(0, 1, size=len(muestra_x))
         x_i = muestra_x + err_x * r
         y_i = muestra_y + err_y * r
-        aprox = biseccion(x_i, y_i)
-        promedios[i] = aprox[0]
-    promedios = np.sort(promedios)
+        a_i, b_i = biseccion(x_i, y_i)
+        promedios_a[i-1] = a_i
+        promedios_b[i-1] = b_i
+    promedios_a = np.sort(promedios_a)
+    promedios_b = np.sort(promedios_b)
     minim = ((100 - porcentaje) /2) * 0.01
     maxim = 1 - (minim)
-    lim_min = promedios[int(Nmc * minim)]
-    lim_max = promedios[int(Nmc * maxim)]
-    return lim_min, lim_max
+    lim_min_a = promedios_a[int(Nmc * minim)]
+    lim_max_a = promedios_a[int(Nmc * maxim)]
+    lim_min_b = promedios_b[int(Nmc * minim)]
+    lim_max_b = promedios_b[int(Nmc * maxim)]
+    return lim_min_a, lim_max_a, lim_min_b, lim_max_b
     pass
 
 
-def biseccion(x, y, adivinanza=1):
-    aprox1 = aprox_leastsq(x, y, adivinanza)
-    aprox2 = aprox_leastsq(y, x, 1. / adivinanza)
-    ap1 = aprox1[0]
-    ap2 = 1 / aprox2[0]
-    a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
-    return a
+def biseccion(x, y):
+    a1, b1 = np.polyfit(x, y, 1)
+    a_0, b_0 = np.polyfit(y, x, 1)
+    a2 = 1 / a_0
+    b2 = - b_0 / a_0
+    x_0 = (b2 - b1) / (a1 - a2)
+    y_0 = (a1 * b2 - b1 * a2) / (a1 - a2)
+    a = (a1 * a2 - 1 + np.sqrt((1 + a1 ** 2) * (1 + a2 ** 2))) / (a1 + a2)
+    b = (y_0 - a * x_0)
+    return a, b
 
 
 # main
@@ -92,17 +100,16 @@ z = datos[:, 2]
 dz = datos[:, 3]
 adivinanza = 1
 # aprox via leastsq
-aprox1 = biseccion(i, z, adivinanza)
+aprox1 = biseccion(i, z)
 print aprox1
 # datos para graficar
 i_min = np.amin(i)
 i_max = np. amax(i)
 i_aprox = np.linspace(i_min, i_max, 10)
-z_aprox2 = y_aprox(i_aprox, aprox1[0])
+z_aprox2 = y_aprox(i_aprox, aprox1)
 # intervalo de confianza
 intervalo = intervalo_confianza(i, z, di, dz, 95)
-print intervalo[0]
-print intervalo[1]
+print intervalo
 # graficos
 fig = plt.figure()
 fig.clf()
