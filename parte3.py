@@ -75,6 +75,7 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
     lim_max_a = promedios_a[int(Nmc * maxim)]
     lim_min_b = promedios_b[int(Nmc * minim)]
     lim_max_b = promedios_b[int(Nmc * maxim)]
+    histograma_confianza(promedios_a, promedios_b)
     return lim_min_a, lim_max_a, lim_min_b, lim_max_b
     pass
 
@@ -91,6 +92,23 @@ def biseccion(x, y):
     return a, b
 
 
+def histograma_confianza(promedios_1, promedios_2):
+    fig2, ax2 = plt.subplots()
+    plt.hist(promedios_1, bins=40)
+    plt.axvline(aprox1[0], color='r', label="$H_0$ del Ajuste")
+    plt.legend()
+    ax2.set_xlabel("$H_0$ $[Km/s /Mpc]$")
+    ax2.set_ylabel("Frecuencia")
+    plt.savefig("histograma_parte3_pendiente.png")
+    fig3, ax3 = plt.subplots()
+    plt.hist(promedios_2, bins=40)
+    plt.axvline(aprox1[1], color='r', label="$H_0$ del Ajuste")
+    plt.legend()
+    ax3.set_xlabel("$H_0$ $[Km/s /Mpc]$")
+    ax3.set_ylabel("Frecuencia")
+    plt.savefig("histograma_parte3_coefdeposicion.png")
+
+
 # main
 nom = "data/DR9Q.dat"
 datos = leer_archivo(nom)
@@ -99,14 +117,21 @@ di = datos[:, 1]
 z = datos[:, 2]
 dz = datos[:, 3]
 adivinanza = 1
-# aprox via leastsq
+# aproximaciones
 aprox1 = biseccion(i, z)
 print aprox1
+aprox2 = np.polyfit(i, z, 1)
+ap3 = np.polyfit(z, i, 1)
+a3 = 1 / ap3[0]
+b3 = - ap3[1] / ap3[0]
+aprox3 = a3, b3
 # datos para graficar
 i_min = np.amin(i)
 i_max = np. amax(i)
 i_aprox = np.linspace(i_min, i_max, 10)
-z_aprox2 = y_aprox(i_aprox, aprox1)
+z_aprox = y_aprox(i_aprox, aprox1)
+z_aprox1 = y_aprox(i_aprox, aprox2)
+z_aprox2 = y_aprox(i_aprox, aprox3)
 # intervalo de confianza
 intervalo = intervalo_confianza(i, z, di, dz, 95)
 print intervalo
@@ -115,9 +140,12 @@ fig = plt.figure()
 fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(i, z, 'o')
-ax1.plot(i_aprox, z_aprox2)
-ax1.set_xlabel("Flujo de banda i")
-ax1.set_ylabel("Flujo de banda z")
-plt.savefig("parte1.png")
+ax1.plot(i_aprox, z_aprox, label="Biseccion")
+ax1.plot(i_aprox, z_aprox1, label="$i = a z + b$")
+ax1.plot(i_aprox, z_aprox2, label="$z = i / a - b / a$")
+ax1.set_xlabel("Flujo de banda i $[10^{-6} Jy]$")
+ax1.set_ylabel("Flujo de banda z $[10^{-6} Jy]$")
+plt.legend(loc=4)
+plt.savefig("parte3.png")
 plt.draw()
 plt.show()

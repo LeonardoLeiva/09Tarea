@@ -80,6 +80,7 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
     maxim = 1 - (minim)
     lim_min = promedios[int(N_iteracion * minim)]
     lim_max = promedios[int(N_iteracion * maxim)]
+    histograma_confianza(promedios)
     return lim_min, lim_max
 
 
@@ -90,6 +91,16 @@ def biseccion(d, v, adivinanza=500):
     ap2 = 1 / aprox2
     a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
     return a
+
+
+def histograma_confianza(promedios):
+    fig2, ax2 = plt.subplots()
+    plt.hist(promedios, bins=40)
+    plt.axvline(H_0, color='r', label="$H_0$ del Ajuste")
+    plt.legend()
+    ax2.set_xlabel("$H_0$ $[Km/s /Mpc]$")
+    ax2.set_ylabel("Frecuencia")
+    plt.savefig("histograma_parte2.png")
 
 
 # main
@@ -122,11 +133,11 @@ fig.clf()
 ax1 = fig.add_subplot(111)
 ax1.plot(d, v, 'o')
 ax1.plot(d_aprox, v_aprox, label="Biseccion")
-ax1.plot(d_aprox, v_aprox1, label="v = H * d")
-ax1.plot(d_aprox, v_aprox2, label="d = v / H")
+ax1.plot(d_aprox, v_aprox1, label="$v = H d$")
+ax1.plot(d_aprox, v_aprox2, label="$d = v / H$")
 ax1.plot()
-ax1.set_xlabel("Distancia [Mpc]")
-ax1.set_ylabel("Velocidad [Km / s]")
+ax1.set_xlabel("Distancia $[Mpc]$")
+ax1.set_ylabel("Velocidad $[Km / s]$")
 plt.legend(loc=4)
 plt.savefig("parte2.png")
 plt.draw()
