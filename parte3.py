@@ -69,7 +69,7 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
         promedios_b[i-1] = b_i
     promedios_a = np.sort(promedios_a)
     promedios_b = np.sort(promedios_b)
-    minim = ((100 - porcentaje) /2) * 0.01
+    minim = ((100 - porcentaje) / 2) * 0.01
     maxim = 1 - (minim)
     lim_min_a = promedios_a[int(Nmc * minim)]
     lim_max_a = promedios_a[int(Nmc * maxim)]
@@ -81,6 +81,11 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
 
 
 def biseccion(x, y):
+    '''
+    mejora de la funcion biseccion. obtiene la pendiente entre dos rectas y el
+    coeficiente de posicion segun la interseccion de las dos rectas que se
+    generan
+    '''
     a1, b1 = np.polyfit(x, y, 1)
     a_0, b_0 = np.polyfit(y, x, 1)
     a2 = 1 / a_0
@@ -93,18 +98,23 @@ def biseccion(x, y):
 
 
 def histograma_confianza(promedios_1, promedios_2):
+    '''
+    grafica los dos histogramas para pendiente y coeficiente de posicion
+    es una funcion circunstancial, se puede mejorar para graficar de forma
+    generica
+    '''
     fig2, ax2 = plt.subplots()
     plt.hist(promedios_1, bins=40)
-    plt.axvline(aprox1[0], color='r', label="$H_0$ del Ajuste")
+    plt.axvline(aprox1[0], color='r', label="Pendiente del Ajuste")
     plt.legend()
-    ax2.set_xlabel("$H_0$ $[Km/s /Mpc]$")
+    ax2.set_xlabel("Pendiente")
     ax2.set_ylabel("Frecuencia")
     plt.savefig("histograma_parte3_pendiente.png")
     fig3, ax3 = plt.subplots()
     plt.hist(promedios_2, bins=40)
-    plt.axvline(aprox1[1], color='r', label="$H_0$ del Ajuste")
-    plt.legend()
-    ax3.set_xlabel("$H_0$ $[Km/s /Mpc]$")
+    plt.axvline(aprox1[1], color='r', label="Coef de Posicion del Ajuste")
+    plt.legend(loc=2)
+    ax3.set_xlabel("Coeficiente de Posicion")
     ax3.set_ylabel("Frecuencia")
     plt.savefig("histograma_parte3_coefdeposicion.png")
 

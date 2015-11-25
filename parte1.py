@@ -84,7 +84,7 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
         aprox = biseccion(x_i, y_i)
         promedios[i] = aprox
     promedios = np.sort(promedios)
-    minim = ((100 - porcentaje) /2) * 0.01
+    minim = ((100 - porcentaje) / 2) * 0.01
     maxim = 1 - (minim)
     lim_min = promedios[int(N_iteracion * minim)]
     lim_max = promedios[int(N_iteracion * maxim)]
@@ -94,16 +94,24 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
 
 
 def biseccion(d, v, adivinanza=500):
+    '''
+    obtiene recta de biseccion entre las dos rectas del ajuste entre los sets
+    de datos dados
+    '''
     aprox1 = aprox_manual(d, v, adivinanza)
     aprox2 = aprox_manual(v, d, 1. / adivinanza)
     ap1 = aprox1
     ap2 = 1 / aprox2
-    a = (ap1 * ap2 - 1 + np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
+    a = (ap1 * ap2 - 1 +
+         np.sqrt((1 + ap1 ** 2) * (1 + ap2 ** 2))) / (ap1 + ap2)
     return a
     pass
 
 
 def histograma_confianza(promedios):
+    '''
+    grafica histogramas para el intervalo de confianza
+    '''
     fig2, ax2 = plt.subplots()
     plt.hist(promedios, bins=40)
     plt.axvline(H_0, color='r', label="$H_0$ del Ajuste")
