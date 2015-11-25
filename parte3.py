@@ -75,7 +75,8 @@ def intervalo_confianza(muestra_x, muestra_y, err_x, err_y, porcentaje):
     lim_max_a = promedios_a[int(Nmc * maxim)]
     lim_min_b = promedios_b[int(Nmc * minim)]
     lim_max_b = promedios_b[int(Nmc * maxim)]
-    histograma_confianza(promedios_a, promedios_b)
+    histograma_confianza(promedios_a, promedios_b, lim_min_a, lim_max_a,
+                         lim_min_b, lim_max_b)
     return lim_min_a, lim_max_a, lim_min_b, lim_max_b
     pass
 
@@ -97,7 +98,8 @@ def biseccion(x, y):
     return a, b
 
 
-def histograma_confianza(promedios_1, promedios_2):
+def histograma_confianza(promedios_1, promedios_2, lim_min_1, lim_max_1,
+                         lim_min_2, lim_max_2):
     '''
     grafica los dos histogramas para pendiente y coeficiente de posicion
     es una funcion circunstancial, se puede mejorar para graficar de forma
@@ -106,6 +108,8 @@ def histograma_confianza(promedios_1, promedios_2):
     fig2, ax2 = plt.subplots()
     plt.hist(promedios_1, bins=40)
     plt.axvline(aprox1[0], color='r', label="Pendiente del Ajuste")
+    plt.axvline(lim_min_1, color='g', label="Intervalo de Confianza")
+    plt.axvline(lim_max_1, color='g')
     plt.legend()
     ax2.set_xlabel("Pendiente")
     ax2.set_ylabel("Frecuencia")
@@ -113,6 +117,8 @@ def histograma_confianza(promedios_1, promedios_2):
     fig3, ax3 = plt.subplots()
     plt.hist(promedios_2, bins=40)
     plt.axvline(aprox1[1], color='r', label="Coef de Posicion del Ajuste")
+    plt.axvline(lim_min_2, color='g', label="Intervalo de Confianza")
+    plt.axvline(lim_max_2, color='g')
     plt.legend(loc=2)
     ax3.set_xlabel("Coeficiente de Posicion")
     ax3.set_ylabel("Frecuencia")

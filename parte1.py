@@ -51,6 +51,10 @@ def aprox_leastsq(d, v, adivinanza):
     return aprox[0]
 
 
+def derivada_chi(beta, x, y):
+    return np.sum(x * y - x ** 2 * beta)
+
+
 def aprox_manual(x, y, beta_0):
     '''
     se buscan los ceros de la derivada de chi cuadrado. es equivalente a usar
@@ -59,8 +63,8 @@ def aprox_manual(x, y, beta_0):
     minimizar. este caso es particular para una relacion lineal entre x e y de
     la forma y = m * x + n, con n = 0. m corresponde a beta
     '''
-    derivada_chi_cuadrado = lambda beta: np.sum(x * y - x ** 2 * beta)
-    beta = opt.newton(derivada_chi_cuadrado, beta_0)
+    # derivada_chi_cuadrado = lambda beta: np.sum(x * y - x ** 2 * beta)
+    beta = opt.newton(derivada_chi, beta_0, fprime=None, args=(x, y))
     return beta
 
 
@@ -88,7 +92,7 @@ def intervalo_confianza(muestra_x, muestra_y, porcentaje):
     maxim = 1 - (minim)
     lim_min = promedios[int(N_iteracion * minim)]
     lim_max = promedios[int(N_iteracion * maxim)]
-    histograma_confianza(promedios)
+    histograma_confianza(promedios, lim_min, lim_max)
     return lim_min, lim_max
     pass
 
@@ -108,13 +112,15 @@ def biseccion(d, v, adivinanza=500):
     pass
 
 
-def histograma_confianza(promedios):
+def histograma_confianza(promedios, lim_min, lim_max):
     '''
     grafica histogramas para el intervalo de confianza
     '''
     fig2, ax2 = plt.subplots()
     plt.hist(promedios, bins=40)
     plt.axvline(H_0, color='r', label="$H_0$ del Ajuste")
+    plt.axvline(lim_min, color='g', label="Intervalo de Confianza")
+    plt.axvline(lim_max, color='g')
     plt.legend()
     ax2.set_xlabel("$H_0$ $[Km/s /Mpc]$")
     ax2.set_ylabel("Frecuencia")
